@@ -97,7 +97,7 @@ def get_file_attributes(file, vif, dzffn):
     return attrs
 
 
-def get_file_thumb(file, vif, file):
+def get_file_thumb(dzffn, vif, file):
     if get_file_mime(file, vif) == 'video':
         return get_video_thumb(dzffn, file)
 
@@ -169,13 +169,15 @@ class File(FileIO):
     force_file = False
 
     def __init__(self, client: 'TelegramManagerClient', path: str, force_file: Union[bool, None] = None,
-                 thumbnail: Union[str, bool, None] = None, caption: Union[str, None] = None):
+                 thumbnail: Union[str, bool, None] = None, caption: Union[str, None] = None, vif = True, dzffn: str ="ffmpeg"):
         super().__init__(path)
         self.client = client
         self.path = path
+        self.dzffn = dzffn
         self.force_file = self.force_file if force_file is None else force_file
         self._thumbnail = thumbnail
         self._caption = caption
+        self.vif = vif
 
     @property
     def file_name(self):
@@ -210,14 +212,17 @@ class File(FileIO):
         thumb = None
         if self._thumbnail is None and not self.force_file:
             try:
-                thumb = get_file_thumb(self.path)
+                thumb = get_file_thumb(self.dzffn, self.vif, self.path)
             except ThumbError as e:
-                click.echo('{}'.format(e), err=True)
+                pass
+                # click.echo('{}'.format(e), err=True)
         elif self.is_custom_thumbnail:
             if not isinstance(self._thumbnail, str):
-                raise TypeError('Invalid type for thumbnail: {}'.format(type(self._thumbnail)))
+                pass
+                # raise TypeError('Invalid type for thumbnail: {}'.format(type(self._thumbnail)))
             elif not os.path.lexists(self._thumbnail):
-                raise TelegramInvalidFile('{} thumbnail file does not exists.'.format(self._thumbnail))
+                pass
+                # raise TelegramInvalidFile('{} thumbnail file does not exists.'.format(self._thumbnail))
             thumb = self._thumbnail
         return thumb
 
@@ -226,7 +231,7 @@ class File(FileIO):
         if self.force_file:
             return [DocumentAttributeFilename(self.file_name)]
         else:
-            return get_file_attributes(self.path)
+            return get_file_attributes(self.path, self.vif, self.dzffn)
 
 
 class SplitFile(File, FileIO):

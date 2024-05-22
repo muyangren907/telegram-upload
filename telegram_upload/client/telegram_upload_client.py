@@ -53,8 +53,8 @@ class TelegramUploadClient(TelegramClient):
             async_to_sync(self._send_album_media(entity, media))
 
     def _send_file_message(self, entity, vif, no_bar, file, thumb, progress):
-        if ('-' in entity or '+' in entity) and (entity[1].isdigit() == True):
-            entity = int(entity)
+        # if ('-' in entity or '+' in entity) and (entity[1].isdigit() == True):
+        #     entity = int(entity)
         if no_bar:
             progress = None
         if vif:
