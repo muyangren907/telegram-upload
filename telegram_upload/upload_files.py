@@ -155,7 +155,7 @@ class LargeFilesBase(UploadFilesBase):
                 yield self.process_normal_file(file)
 
     def process_normal_file(self, file: str) -> 'File':
-        return File(self.client, file, force_file=self.force_file, thumbnail=self.thumbnail, caption=self.caption)
+        return File(self.client, file, dzffn=self.dzffn, force_file=self.force_file, thumbnail=self.thumbnail, caption=self.caption)
 
     def process_large_file(self, file):
         raise NotImplementedError
