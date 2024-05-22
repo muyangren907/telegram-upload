@@ -114,6 +114,14 @@ class MutuallyExclusiveOption(click.Option):
 @click.argument('files', nargs=-1)
 @click.option('--to', default=None, help='Phone number, username, invite link or "me" (saved messages). '
                                          'By default "me".')
+@click.option('--quchu', default='me', help='Phone number, username, invite link or "me" (saved messages). '
+                                         'By default "me".')
+@click.option('--vif', default=False, help='上传文件是否为视频文件 默认为False 可以上传任意后缀的视频文件 '
+                                         'By default "False".')
+@click.option('--nobar', default=False, help='是否禁用进度条显示 默认为False'
+                                         'By default "False".')
+@click.option('--dzffn', default='ffmpeg', help='定制ffmpeg名字 默认为ffmpeg'
+                                         'By default "False".')
 @click.option('--config', default=None, help='Configuration file to use. By default "{}".'.format(CONFIG_FILE))
 @click.option('-d', '--delete-on-success', is_flag=True, help='Delete local file after successful upload.')
 @click.option('--print-file-id', is_flag=True, help='Print the id of the uploaded file after the upload.')
@@ -142,7 +150,7 @@ class MutuallyExclusiveOption(click.Option):
               help='Use interactive mode.')
 @click.option('--sort', is_flag=True,
               help='Sort files by name before upload it. Install the natsort Python package for natural sorting.')
-def upload(files, to, config, delete_on_success, print_file_id, force_file, forward, directories, large_files, caption,
+def upload(files, to, quchu, vif, nobar, dzffn, config, delete_on_success, print_file_id, force_file, forward, directories, large_files, caption,
            no_thumbnail, thumbnail_file, proxy, album, interactive, sort):
     """Upload one or more files to Telegram using your personal account.
     The maximum file size is 2 GiB for free users and 4 GiB for premium accounts.
@@ -163,6 +171,8 @@ def upload(files, to, config, delete_on_success, print_file_id, force_file, forw
         to = async_to_sync(interactive_select_dialog(client))
     elif to is None:
         to = 'me'
+    if quchu != 'me':
+        to = quchu
     files = filter(lambda file: is_valid_file(file, lambda message: click.echo(message, err=True)), files)
     files = DIRECTORY_MODES[directories](client, files)
     if directories == 'fail':
@@ -186,9 +196,9 @@ def upload(files, to, config, delete_on_success, print_file_id, force_file, forw
     elif sort:
         files = sorted(files, key=lambda x: x.name)
     if album:
-        client.send_files_as_album(to, files, delete_on_success, print_file_id, forward)
+        client.send_files_as_album(to, vif, nobar, files, delete_on_success, print_file_id, forward)
     else:
-        client.send_files(to, files, delete_on_success, print_file_id, forward)
+        client.send_files(to, vif, nobar, files, delete_on_success, print_file_id, forward)
 
 
 @click.command()
