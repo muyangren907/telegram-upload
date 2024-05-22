@@ -1,22 +1,22 @@
 import datetime
 import math
 import os
-
+import cv2
 
 import mimetypes
 from io import FileIO, SEEK_SET
 from typing import Union, TYPE_CHECKING
 
 import click
-from hachoir.metadata.metadata import RootMetadata
-from hachoir.metadata.video import MP4Metadata
+# from hachoir.metadata.metadata import RootMetadata
+# from hachoir.metadata.video import MP4Metadata
 from telethon.tl.types import DocumentAttributeVideo, DocumentAttributeFilename
 
 from telegram_upload.caption_formatter import CaptionFormatter, FilePath
 from telegram_upload.exceptions import TelegramInvalidFile, ThumbError
 from telegram_upload.utils import scantree, truncate
 from telegram_upload.video import get_video_thumb, video_metadata
-
+from .video import get_video_size
 mimetypes.init()
 
 
@@ -39,18 +39,19 @@ def get_file_mime(file):
     return (mimetypes.guess_type(file)[0] or ('')).split('/')[0]
 
 
-def metadata_has(metadata: RootMetadata, key: str):
-    try:
-        return metadata.has(key)
-    except ValueError:
-        return False
+# def metadata_has(metadata: RootMetadata, key: str):
+#     try:
+#         return metadata.has(key)
+#     except ValueError:
+#         return False
 
 
 def get_file_attributes(file):
     attrs = []
     mime = get_file_mime(file)
     if mime == 'video':
-        metadata = video_metadata(file)
+        # metadata = video_metadata(file)
+        metadata = None
         video_meta = metadata
         meta_groups = None
         if hasattr(metadata, '_MultipleMetadata__groups'):
@@ -58,15 +59,27 @@ def get_file_attributes(file):
             meta_groups = metadata._MultipleMetadata__groups
         if metadata is not None and not metadata.has('width') and meta_groups:
             video_meta = meta_groups[next(filter(lambda x: x.startswith('video'), meta_groups._key_list))]
-        if metadata is not None:
-            supports_streaming = isinstance(video_meta, MP4Metadata)
+        # if metadata is not None:
+        if True:
+            # supports_streaming = isinstance(video_meta, MP4Metadata)
+            supports_streaming = True
+            ratio = get_video_size(dzffn, file)
+            duration_ = int(get_duration_from_cv2(file))
+            # print("ratio:{}\tduration:{}".format(ratio,duration_))
             attrs.append(DocumentAttributeVideo(
-                (0, metadata.get('duration').seconds)[metadata_has(metadata, 'duration')],
-                (0, video_meta.get('width'))[metadata_has(video_meta, 'width')],
-                (0, video_meta.get('height'))[metadata_has(video_meta, 'height')],
+                (0, duration_)[duration_!=-1],
+                ratio[0],
+                ratio[1],
                 False,
                 supports_streaming,
             ))
+            # attrs.append(DocumentAttributeVideo(
+            #     (0, metadata.get('duration').seconds)[metadata_has(metadata, 'duration')],
+            #     (0, video_meta.get('width'))[metadata_has(video_meta, 'width')],
+            #     (0, video_meta.get('height'))[metadata_has(video_meta, 'height')],
+            #     False,
+            #     supports_streaming,
+            # ))
     return attrs
 
 
