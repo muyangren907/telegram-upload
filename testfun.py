@@ -49,6 +49,7 @@ def tgupload(files, to, quchu, vif, nobar, dzffn, config, c1, delete_on_success,
         if album:
             client.send_files_as_album(to, vif, nobar, files, delete_on_success, print_file_id, forward)
         else:
+            print('print(files): {}'.format(files))
             client.send_files(to, vif, nobar, files, delete_on_success, print_file_id, forward)
         client.disconnect()
     except Exception as e:
@@ -56,7 +57,7 @@ def tgupload(files, to, quchu, vif, nobar, dzffn, config, c1, delete_on_success,
         client.disconnect()
 
 
-file_path = ['2023_05_09_16_27_35.dox']
+file_path = ['/workspaces/telegram-uploaddzb/2023_05_09_16_27_35.dox']
 to_cha='-1002113604998'
 vif=True
 nobar=False

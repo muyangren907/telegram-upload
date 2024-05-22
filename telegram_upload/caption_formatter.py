@@ -298,13 +298,16 @@ class FileMixin:
 
 class FilePath(FileMixin, Path):
     def __new__(cls, *args, **kwargs):
-        if cls is FilePath:
-            cls = WindowsFilePath if os.name == 'nt' else PosixFilePath
-        self = cls._from_parts(args)
-        if not self._flavour.is_supported:
-            raise NotImplementedError("cannot instantiate %r on your system"
-                                      % (cls.__name__,))
-        return self
+        # if cls is FilePath:
+        #     cls = WindowsFilePath if os.name == 'nt' else PosixFilePath
+        # print("args:",args)
+        # self = cls._from_parts(args)
+        # print("self:",self)
+        # if not self._flavour.is_supported:
+        #     raise NotImplementedError("cannot instantiate %r on your system"
+        #                               % (cls.__name__,))
+        return args[0]
+        # return self
 
 
 class WindowsFilePath(FileMixin, WindowsPath):
