@@ -56,14 +56,14 @@ def tgupload(files, to, quchu, vif, nobar, dzffn, config, c1, delete_on_success,
         client.disconnect()
 
 
-file_path = ['/workspaces/telegram-uploaddzb/2023_05_09_16_27_35.dox']
+file_path = ['2023_05_09_16_27_35.dox']
 to_cha='-1002113604998'
 vif=True
 nobar=False
 # 定制 ffmpeg
 dzffn = 'ffmpeg'
 config_path = '/home/codespace/.config/telegram-upload.json'
-caption = '温岭天和一品_2023_05_09_16_27_35'
+caption = '卖车美女_重庆银马_长安马自达重庆银马店_2024-05-22-21-10-06_Herokuxxxx_Douyin_douyinzhibo37xby_0'
 new_loop = asyncio.new_event_loop()
 asyncio.set_event_loop(new_loop)
 tgupload(files=file_path, to=to_cha, quchu='me', vif=vif, nobar=nobar, dzffn=dzffn, config=config_path, c1=None, delete_on_success=True, 

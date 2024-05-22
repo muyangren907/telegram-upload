@@ -60,7 +60,7 @@ class TelegramUploadClient(TelegramClient):
         if vif:
             filenamehz = file.name.split('.')[-1]
             file.name = file.name.replace(".{}".format(filenamehz),'.mp4')
-        message = self.send_file(entity, file, thumb=thumb,
+        message = self.send_file(entity=entity, file=file, thumb=thumb,
                                  file_size=file.file_size if isinstance(file, File) else None,
                                  caption=file.file_caption, force_document=file.force_file,
                                  progress_callback=progress, attributes=file.file_attributes ,supports_streaming=True)
@@ -111,7 +111,7 @@ class TelegramUploadClient(TelegramClient):
                 if send_as_media:
                     message = async_to_sync(self._send_media(entity, file, progress))
                 else:
-                    message = self._send_file_message(entity, vif, no_bar, file, thumb, progress)
+                    message = self._send_file_message(entity=entity, vif=vif, no_bar=no_bar, file=file, thumb=thumb, progress=progress)
             finally:
                 if bar is not None:
                     bar.render_finish()
@@ -136,7 +136,7 @@ class TelegramUploadClient(TelegramClient):
             has_files = True
             thumb = file.get_thumbnail()
             try:
-                message = self.send_one_file(entity, vif, no_bar, file, send_as_media, thumb=thumb)
+                message = self.send_one_file(entity=entity, vif=vif, no_bar=no_bar, file=file, send_as_media=send_as_media, thumb=thumb)
             finally:
                 if thumb and not file.is_custom_thumbnail and os.path.lexists(thumb):
                     os.remove(thumb)
