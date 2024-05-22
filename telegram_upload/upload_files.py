@@ -17,6 +17,14 @@ from telegram_upload.exceptions import TelegramInvalidFile, ThumbError
 from telegram_upload.utils import scantree, truncate
 from telegram_upload.video import get_video_thumb, video_metadata
 from .video import get_video_size
+def get_duration_from_cv2(filename):
+    cap = cv2.VideoCapture(filename)
+    if cap.isOpened():
+        rate = cap.get(5)
+        frame_num =cap.get(7)
+        duration = frame_num/rate
+        return duration
+    return -1
 mimetypes.init()
 
 
@@ -31,12 +39,18 @@ def is_valid_file(file, error_logger=None):
     elif not os.path.getsize(file):
         error_message = 'File "{}" is empty.'.format(file)
     if error_message and error_logger is not None:
-        error_logger(error_message)
+        pass
+        # error_logger(error_message)
     return error_message is None
 
 
-def get_file_mime(file):
-    return (mimetypes.guess_type(file)[0] or ('')).split('/')[0]
+def get_file_mime(file, vif):
+    # return (mimetypes.guess_type(file)[0] or ('')).split('/')[0]
+    tp = (mimetypes.guess_type(file)[0] or ('')).split('/')[0]
+    if vif or tp=='' or tp is None:
+        tp = 'video'
+    # print('{} {}'.format(type(tp),tp))
+    return tp
 
 
 # def metadata_has(metadata: RootMetadata, key: str):
@@ -46,9 +60,9 @@ def get_file_mime(file):
 #         return False
 
 
-def get_file_attributes(file):
+def get_file_attributes(file, vif, dzffn):
     attrs = []
-    mime = get_file_mime(file)
+    mime = get_file_mime(file, vif)
     if mime == 'video':
         # metadata = video_metadata(file)
         metadata = None
@@ -83,9 +97,9 @@ def get_file_attributes(file):
     return attrs
 
 
-def get_file_thumb(file):
-    if get_file_mime(file) == 'video':
-        return get_video_thumb(file)
+def get_file_thumb(file, vif, file):
+    if get_file_mime(file, vif) == 'video':
+        return get_video_thumb(dzffn, file)
 
 
 class UploadFilesBase:
