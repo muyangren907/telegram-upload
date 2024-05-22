@@ -103,8 +103,8 @@ def get_file_thumb(dzffn, vif, file):
 
 
 class UploadFilesBase:
-    def __init__(self, dzffn: str = 'ffmpeg', client: 'TelegramManagerClient', files, thumbnail: Union[str, bool, None] = None,
-                 force_file: bool = False, caption: Union[str, None] = None):
+    def __init__(self, client: 'TelegramManagerClient', files, thumbnail: Union[str, bool, None] = None,
+                 force_file: bool = False, caption: Union[str, None] = None, dzffn: str = 'ffmpeg',):
         self._iterator = None
         self.dzffn = dzffn
         self.client = client
