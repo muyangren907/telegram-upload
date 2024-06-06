@@ -361,7 +361,7 @@ class TelegramUploadClient(TelegramClient):
         try:
             result = await self(request)
         except FloodWaitError as e:
-            time.sleep(e.seconds + 10)
+            time.sleep(10)
         except InvalidBufferError as e:
             if e.code == 429:
                 # Too many connections
@@ -375,7 +375,7 @@ class TelegramUploadClient(TelegramClient):
             pass
             # click.echo(f'Detected connection error. Retrying...', err=True)
         except Exception as e:
-            time.sleep(e.seconds + 10)
+            time.sleep(10)
         else:
             self.upload_semaphore.release()
         if result is None and retry < MAX_RECONNECT_RETRIES:
