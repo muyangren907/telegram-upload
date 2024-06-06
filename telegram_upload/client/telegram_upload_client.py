@@ -19,7 +19,7 @@ from telegram_upload.utils import grouper, async_to_sync, get_environment_intege
 PARALLEL_UPLOAD_BLOCKS = get_environment_integer('TELEGRAM_UPLOAD_PARALLEL_UPLOAD_BLOCKS', 1)
 ALBUM_FILES = 10
 RETRIES = 3
-MAX_RECONNECT_RETRIES = get_environment_integer('TELEGRAM_UPLOAD_MAX_RECONNECT_RETRIES', 5)
+MAX_RECONNECT_RETRIES = get_environment_integer('TELEGRAM_UPLOAD_MAX_RECONNECT_RETRIES', 10)
 RECONNECT_TIMEOUT = get_environment_integer('TELEGRAM_UPLOAD_RECONNECT_TIMEOUT', 5)
 MIN_RECONNECT_WAIT = get_environment_integer('TELEGRAM_UPLOAD_MIN_RECONNECT_WAIT', 2)
 
@@ -360,6 +360,8 @@ class TelegramUploadClient(TelegramClient):
         result = None
         try:
             result = await self(request)
+        except FloodWaitError as e:
+            time.sleep(e.seconds + 10)
         except InvalidBufferError as e:
             if e.code == 429:
                 # Too many connections
