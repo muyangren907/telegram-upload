@@ -374,6 +374,8 @@ class TelegramUploadClient(TelegramClient):
             # Retry to send the file part
             pass
             # click.echo(f'Detected connection error. Retrying...', err=True)
+        except Exception as e:
+            time.sleep(e.seconds + 10)
         else:
             self.upload_semaphore.release()
         if result is None and retry < MAX_RECONNECT_RETRIES:
