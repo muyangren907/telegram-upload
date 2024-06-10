@@ -18,13 +18,16 @@ from telegram_upload.utils import scantree, truncate
 from telegram_upload.video import get_video_thumb, video_metadata
 from .video import get_video_size
 def get_duration_from_cv2(filename):
-    cap = cv2.VideoCapture(filename)
-    if cap.isOpened():
-        rate = cap.get(5)
-        frame_num =cap.get(7)
-        duration = frame_num/rate
-        return duration
-    return -1
+    try:
+        cap = cv2.VideoCapture(filename)
+        if cap.isOpened():
+            rate = cap.get(5)
+            frame_num =cap.get(7)
+            duration = frame_num/rate
+            return duration
+        return -1
+    except Exception as e:
+        return -1
 mimetypes.init()
 
 
